@@ -7,7 +7,7 @@ IMPLICIT NONE
 WRITE(RunDIMSD,200)
 200 FORMAT(1X,/,'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DIMSD_F90 v1.0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>',//,&
 '      * * DIMSD_F90 v1.0* * : A Fortran package for solving structural dynamics  by		',/,&
-'                                                     using direct Time Integration methods.        			 		',/)!,&
+'						using direct Time Integration methods.        			 		',/)!,&
 
 WRITE (RunDIMSD,300)
 300 FORMAT (1X,'      Copyright (c) 2018. Jin-ze Li ')

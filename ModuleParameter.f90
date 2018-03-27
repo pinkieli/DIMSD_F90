@@ -1,8 +1,9 @@
 MODULE ModuleParameter
 
 IMPLICIT NONE
-CHARACTER(12) :: K_FileName, M_FileName, C_FileName, IniD_FileName,   &
+CHARACTER(12) ::  IniD_FileName,   &
                  		IniV_FileName, ForceFileName
+CHARACTER(LEN=:), ALLOCATABLE :: K_FileName,M_FileName,C_FileName,
 
 CHARACTER(4) :: M_Type, C_Type, IniD_Type, IniV_Type, IntegrationTyle, F_Type
 

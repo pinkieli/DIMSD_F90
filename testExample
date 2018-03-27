@@ -1,16 +1,16 @@
 ! 计算动力学讲义例2-1
-m, lump, m1          ! 集中质量阵
-k , k1
-inid, zero           ! 初始条件均为零
-iniv, zero
+m   ,lump,m11111111111111111111111          ! 集中质量阵
+k   ,k1234567890123456789
+inid,zero           ! 初始条件均为零
+iniv,zero
 ndof,2               ! 总自由度数目为2
 fpro, 10,0,0,0,0
-forc, sing, 2        ! 第二个自由度上作用节点力
-meth, newm, 0.5,0.25 ! 采用Newmark法，gamma=0.5, beta=0.25
+forc,sing,2        ! 第二个自由度上作用节点力
+meth,newm,0.5,0.25 ! 采用Newmark法，gamma=0.5, beta=0.25
 dt,0.28
 time,28            ! 0.28*12
 disp,1,disp1,2,disp2 ! 输出自由度1，2的位移结果
-velo,2,velo1         ! 输出自由度2的速度结果
+velo,2,velo2,1,velo1         ! 输出自由度2的速度结果
 
 
 end

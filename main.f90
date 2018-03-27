@@ -1,14 +1,14 @@
 
-!<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DIMSD_F90 v1.0 >>>>>>>>>>>>>>>>>>>>>>>>>> >>>>>>|
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DIMSD_F90 v1.0 >>>>>>>>>>>>>>>>>>>>>>>>>>> >>>>>>|
 
-!//////////////////////////////////////////////////////////////////////////// |
-!      * * DIMSD_F90 v1.0* * : A Fortran package for solving structral dynamics  by|
-!                                                using direct Time Integration methods.        			    |
-!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ |
-!          																    |
-!      Copyright (c) 2018, Jin-ze Li                                         						    |
-!      All rights reserved.     										              |
-!																	     |
+!///////////////////////////////////////////////////////////////////////////////|
+!      * * DIMSD_F90 v1.0* * : A Fortran package for solving structural dynamics  by		|
+!                                                using direct Time Integration methods.        			 		|
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
+!          																    			|
+!      Copyright (c) 2018, Jin-ze Li                                         						    		|
+!      All rights reserved.     										              			|
+!																	   			|
 !++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ! 																	  		         |
 !	This version was developed and run on Gfortran  6.3.0 20170516 (Debian)		         |
@@ -41,6 +41,8 @@ INTEGER :: IERROR
 
 OPEN(UNIT=RunDIMSD,FILE='DIMSD_F90.TXT',STATUS='UNKNOWN',&
 	ACTION='WRITE',IOSTAT=IERROR)
+
+CALL DIMSD_F90()
 
 OPENIF: IF (IERROR==0) THEN
 

@@ -1,0 +1,105 @@
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DIMSD_F90 v1.0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+      * * DIMSD_F90 v1.0* * : A Fortran package for solving structural dynamics  by		
+						using direct Time Integration methods.        			 		
+
+       Copyright (c) 2018. Jin-ze Li 
+       All rights reserved.
+
+ ===============================================================================
+
+	This version was developed and run on Gfortran  6.3.0 20170516 (Debian)		         
+	Date: May 25, 2018                                                     							          		
+	Author: Jin-ze Li   ( Harbin Institute of Technology, China )          		          		
+	For any problems with the code, please contact the author:                                       		
+	E-mail: pinkie.ljz@gmail.com                                        						        		
+	       	       pinkie_li@163.com   													
+
+	Note: this code comes with no guarantee or warranty of any kind.					
+
+===============================================================================
+
+The Input Filename is : "testExample"
+
+                                          ========================================
+                                            Begin to read commands and parameters
+                                          ========================================
+
+Current running command is "m"
+           Type of mass matrix is :lump
+           Mass matrix in file : m11111111111111111111111  
+
+Current running command is "k"
+           Stiff matrix in file :k1234567890123456789
+
+Current running command is "inid"
+           Method of specifying initial condition is :zero
+
+Current running command is "iniv"
+           Method of specifying initial condition is :zero
+
+Current running command is "ndof"
+           NDof =    2
+
+Current running command is "fpro"
+           Parameters of proptational force :
+           10.0000      0.0000      0.0000      0.0000      0.0000
+
+Current running command is "forc"
+           Type of nodal force ID is : sing
+           Nodal force is imposed on DOF   2
+
+Current running command is "meth"
+           Selected Direct Time Integration Method is :newm
+
+Current running command is "dt"
+           dt =       0.28 (sec.)
+
+Current running command is "time"
+           Time =      28.00 (sec.)
+
+Current running command is "disp"
+           Total number of outputted DOF is: 2
+           No.    Number of DOF    Filename
+          ---    --------------   ---------
+            1                     1                     disp1       
+            2                     2                     disp2       
+
+Current running command is "velo"
+           Total number of outputted DOF is: 2
+           No.    Number of DOF    Filename
+          ---    --------------   ---------
+            1                     2                     velo2       
+            2                     1                     velo1       
+
+Current running command is "end"
+
+                                          ========================================
+                                            End of reading commands and parameters
+                                          ========================================
+
+====== Begin to read data file ... ======
+
+Read data of stiff matrix...
+    Stiff matrix is :
+          6.0000     -2.0000
+         -2.0000      4.0000
+
+Read data of mass matrix...
+    Lumped mass matrix is :
+          2.0000      1.0000
+    Damping matrix is :
+          0.0000      0.0000
+          0.0000      0.0000
+
+------ End of reading data file ------
+
+====== Begin to compute ... ======
+
+Total number of time intervals is : 100
+
+Run Newmark method for time integration...
+    gamma =  0.5000        beta =  0.2500
+
+------ END of computation ------

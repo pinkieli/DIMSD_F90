@@ -16,40 +16,40 @@ USE ModuleData
 
 IMPLICIT NONE
 LOGICAL :: InquireFile, pcomp
-INTEGER :: i,j
+INTEGER :: I,J
 ALLOCATE( K_Matrix(NDof,NDof), M_Matrix(NDof,NDof), C_Matrix(NDof,NDof))
 ALLOCATE( d0Vector(NDof), v0Vector(NDof), NodalForceId(NDof))
-	
+
 WRITE(RunDIMSD, 200)
-200 FORMAT(/, '====== Begin to read data file ... ======') 
+200 FORMAT(/, '====== Begin to read data file ... ======')
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
 ! 																v
 !				Read Stiff Matrix from K_FileName.				v
 ! 																v
 ! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<</
 IF (InquireFile(K_FileName)) THEN ! K_FileName exists
-	
+
 	OPEN(UNIT=InputData,FILE=K_FileName, STATUS='OLD')
-	READ(InputData,*) ((K_Matrix(i,j),j=1,NDof),i=1,NDof)
-	
+	READ(InputData,*) ((K_Matrix(I,J),J=1,NDof),I=1,NDof)
+
 	CLOSE(InputData)
 
-	WRITE(RunDIMSD, 210) 
+	WRITE(RunDIMSD, 210)
 	210 FORMAT(/,'Read data of stiff matrix...')
-	WRITE(RunDIMSD,211) ((K_Matrix(i,j),j=1,NDof),i=1,NDof)
+	WRITE(RunDIMSD,211) ((K_Matrix(I,J),J=1,NDof),I=1,NDof)
 	211 FORMAT(4X,'Stiff matrix is :', /,(4X,2F12.4))
 
 ELSE ! ................................................................
 	WRITE(*,212) K_FileName
-	WRITE(RunDIMSD, 222)  K_FileName
+	WRITE(RunDIMSD, 212)  K_FileName
 	212 FORMAT(1X,'** ERROR**: ',A, 'file is not found ! Check input file!')
 	STOP '**Error** : The file of Stiff Matrix is not found ! Check input file!'
 
 END IF
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-! 																v
-!					Read Mass Matrix from M_FileName.				v
-! 																v
+! 														     v
+!					Read Mass Matrix from M_FileName.		     v
+! 														     v
 ! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<</
 M_Matrix=0.0
 IF (InquireFile(M_FileName)) THEN ! K_FileName exists
@@ -57,15 +57,15 @@ IF (InquireFile(M_FileName)) THEN ! K_FileName exists
 	OPEN(UNIT=InputData,file=M_FileName, STATUS='OLD')
 
 	IF (pcomp(M_Type, 'cons',4)) THEN
-		READ(InputData,*) ((M_Matrix(i,j),j=1,NDof),i=1,NDof)
+		READ(InputData,*) ((M_Matrix(I,J),J=1,NDof),I=1,NDof)
 		WRITE(RunDIMSD, 220)
-		WRITE(RunDIMSD,221) ((M_Matrix(i,j),j=1,NDof),i=1,NDof)
+		WRITE(RunDIMSD,221) ((M_Matrix(I,J),J=1,NDof),I=1,NDof)
 		221 FORMAT(4X,'Consistent mass matrix is :', /,(4X,2f12.4))
 
 	ELSE IF (pcomp(M_Type, 'lump',4)) THEN
-		READ(InputData,*) (M_Matrix(i,i),i=1,NDof)
+		READ(InputData,*) (M_Matrix(I,I),I=1,NDof)
 		WRITE(RunDIMSD, 220)
-		WRITE(RunDIMSD, 222) (M_Matrix(i,i),i=1,NDof)
+		WRITE(RunDIMSD, 222) (M_Matrix(I,I),I=1,NDof)
 		222 FORMAT(4X, 'Lumped mass matrix is :', /, 4X, 2f12.4)
 
 	ELSE
@@ -73,7 +73,7 @@ IF (InquireFile(M_FileName)) THEN ! K_FileName exists
 		223 FORMAT(/,'**Error** : The type of Mass Matrix is wrong! Check input file!')
 		STOP '**Error : The type of Mass Matrix is wrong! Check input file!'
 
-	END IF 
+	END IF
 	220 FORMAT(/,'Read data of mass matrix...')
 	CLOSE(InputData)
 
@@ -91,14 +91,14 @@ END IF
 ! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<</
 !
 ! IF  C_Type is 'file', read Damping Matrix from C_FileName;
-! IF  C_Type is 'rayl', compute Damping Matrix from K_Matrix and 
+! IF  C_Type is 'rayl', compute Damping Matrix from K_Matrix and
 ! 			M_Matrix.
 !________________________________________________________________
 IF (C_Exist) THEN
 	IF (pcomp(C_Type, 'file',4)) THEN
 		IF (InquireFile(C_FileName)) THEN
 			OPEN(UNIT=InputData,file=C_FileName, STATUS='OLD')
-			READ(InputData,*) ((C_Matrix(i,j),j=1,NDof),i=1,NDof)
+			READ(InputData,*) ((C_Matrix(I,J),J=1,NDof),I=1,NDof)
 			CLOSE(InputData)
 			WRITE(RunDIMSD, 230)
 			230 FORMAT(/,'Read data of damping matrix...')
@@ -112,8 +112,8 @@ IF (C_Exist) THEN
 	END IF
 ELSE
 	C_Matrix = 0.0
-END IF 
-WRITE(RunDIMSD,231) ((C_Matrix(i,j),j=1,NDof),i=1,NDof)
+END IF
+WRITE(RunDIMSD,231) ((C_Matrix(I,J),J=1,NDof),I=1,NDof)
 231 FORMAT(4X,'Damping matrix is :', /,(4X,2F12.4))
 !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
 ! 																v
@@ -124,11 +124,11 @@ IF (pcomp(IniD_Type, 'file',4)) THEN
 
 	IF (InquireFile(IniD_FileName)) THEN
 		OPEN(UNIT=InputData,file=IniD_FileName, STATUS='OLD')
-		read(InputData,*) (d0Vector(i),i=1,NDof)
+		read(InputData,*) (d0Vector(I),I=1,NDof)
 		CLOSE(InputData)
-		WRITE(RunDIMSD, 240) 
+		WRITE(RunDIMSD, 240)
 		240 FORMAT(/,'Read data of initial displacement ...')
-		WRITE(RunDIMSD, 241) (d0Vector(i),i=1,NDof)
+		WRITE(RunDIMSD, 241) (d0Vector(I),I=1,NDof)
 		241 FORMAT(4X, 'Initial displacement is :',/, 4X, 2f12.4)
 	END IF
 
@@ -150,11 +150,11 @@ IF (pcomp(IniV_Type, 'file',4)) THEN
 
 	IF (InquireFile(IniV_FileName)) THEN
 		OPEN(UNIT=InputData,FILE=IniV_FileName, STATUS='OLD')
-		read(InputData,*) (v0Vector(i),i=1,NDof)
+		read(InputData,*) (v0Vector(I),I=1,NDof)
 		CLOSE(InputData)
-		WRITE(RunDIMSD, 250) 
+		WRITE(RunDIMSD, 250)
 		250 FORMAT(/,'Read data of initial velocity ...')
-		WRITE(RunDIMSD, 251) (v0Vector(i),i=1,NDof)
+		WRITE(RunDIMSD, 251) (v0Vector(I),I=1,NDof)
 		251 FORMAT(4X, 'Initial velocity is :',/, 4X, 2f12.4)
 	END IF
 
@@ -176,11 +176,11 @@ IF (pcomp(F_Type, 'file',4)) THEN
 
 	IF (InquireFile(ForceFileName)) THEN
 		OPEN(UNIT=InputData,file=ForceFileName, STATUS='OLD')
-		READ(InputData,*) (NodalForceId(i),i=1,NDof)
+		READ(InputData,*) (NodalForceId(I),I=1,NDof)
 		CLOSE(InputData)
-		WRITE(RunDIMSD, 260) 
+		WRITE(RunDIMSD, 260)
 		260 FORMAT(/,'Read data of nodal force ID ...')
-		WRITE(RunDIMSD, 261) (NodalForceId(i),i=1,NDof)
+		WRITE(RunDIMSD, 261) (NodalForceId(I),I=1,NDof)
 		261 FORMAT(4X, 'Nodal force ID is :',/, 4X, 2I4)
 	END IF
 
@@ -198,5 +198,5 @@ END IF
 ! 																v
 ! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<</
 WRITE(RunDIMSD, 201)
-201 FORMAT(/, '------ End of reading data file ------') 
+201 FORMAT(/, '------ End of reading data file ------')
 END SUBROUTINE ReadData

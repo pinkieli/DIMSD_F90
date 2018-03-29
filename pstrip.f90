@@ -13,16 +13,22 @@ SUBROUTINE pstrip(XXX,YYY,I,J)
 IMPLICIT NONE
 
 LOGICAL :: cksep
-CHARACTER(LEN=255) :: XXX,YYY 
-INTEGER :: I,N,M,J
+CHARACTER (LEN=*), INTENT(INOUT) :: YYY
+INTEGER, INTENT(INOUT) :: J
+INTEGER, INTENT(IN) :: I
+CHARACTER(LEN=J), INTENT(OUT) :: XXX
+
+INTEGER :: N,M,K
+
+K = LEN_TRIM(YYY)
 
 !     Strip comments
 
-do N = I,255
+do N = I,K
    if(ichar(YYY(N:N)).eq.13) then
     YYY(N:N) = ' '
    elseif(YYY(N:N).eq.'!') then
-    YYY(N:255) = ' '
+    YYY(N:K) = ' '
      go to 100
   end if
  end do
@@ -30,9 +36,9 @@ do N = I,255
 !     Strip leading blanks
 
 100   XXX = ' '
-      do N = 1,255
+      do N = 1,K
         if(YYY(N:N).ne.' ') then
-          XXX(1:256-N) = YYY(N:255)
+          XXX(1:K+1-N) = YYY(N:K)
 		  go to 200
         end if
       end do
@@ -41,16 +47,16 @@ do N = I,255
 
 !     Find last character
 
-200   do M = 255,1,-1
+200   do M = K,1,-1
         if(XXX(M:M).ne.' ') go to 300
       end do
-      M = 2  
+      M = 2
 
 !     Remove extra blanks
 
 300   N = 1
 ! remove blank before comma and blank
-301   if(XXX(N:N).eq.' ' .and. cksep(XXX(N+1:N+1))) then  
+301   if(XXX(N:N).eq.' ' .and. cksep(XXX(N+1:N+1))) then
         XXX(N:M-1) = XXX(N+1:M)
         XXX(M:M) = ' '
         M = M - 1

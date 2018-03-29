@@ -1,14 +1,14 @@
 
-!<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DIMSD_F90 v1.0 >>>>>>>>>>>>>>>>>>>>>>>>>> >>>>>>|
+!<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DIMSD_F90 v1.0 >>>>>>>>>>>>>>>>>>>>>>>>>>> >>>>>>|
 
-!//////////////////////////////////////////////////////////////////////////// |
-!      * * DIMSD_F90 v1.0* * : A Fortran package for solving structral dynamics  by|
-!                                                using direct Time Integration methods.        			    |
-!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ |
-!          																    |
-!      Copyright (c) 2018, Jin-ze Li                                         						    |
-!      All rights reserved.     										              |
-!																	     |
+!///////////////////////////////////////////////////////////////////////////////|
+!      * * DIMSD_F90 v1.0* * : A Fortran package for solving structural dynamics  by		|
+!                                                using direct Time Integration methods.        			 		|
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
+!          																    			|
+!      Copyright (c) 2018, Jin-ze Li                                         						    		|
+!      All rights reserved.     										              			|
+!																	   			|
 !++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ! 																	  		         |
 !	This version was developed and run on Gfortran  6.3.0 20170516 (Debian)		         |
@@ -29,37 +29,51 @@ PROGRAM MAIN
 ! 		module_ioport.f90 														|
 !		ReadPara.f90 															|
 ! 		ReadData.f90 															|
-!		TimeIntegration.f90 														|
+!		DirectTimeIntegration.f90												|
 !\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 USE ModuleIoPort
 
 IMPLICIT NONE
 
-CHARACTER(LEN=12) :: InputFileName
+! Declare deferred-length string : InputFileName
+CHARACTER (LEN=:), ALLOCATABLE :: InputFileName
 LOGICAL :: ExistInFile
 INTEGER :: IERROR
 
-OPEN(UNIT=RunDIMSD,FILE='DIMSD_F90.TXT',STATUS='UNKNOWN',&
+OPEN(UNIT=RunDIMSD,FILE='DIMSD_F90',STATUS='UNKNOWN',&
 	ACTION='WRITE',IOSTAT=IERROR)
+
+CALL DIMSD_F90()
 
 OPENIF: IF (IERROR==0) THEN
 
 	! OPEN SUCCESSFULLY.
 	ExistInFile = .FALSE.
 	! READ THE FILENAME FROM SCREEN AND TEST EXISTENCE.
+
 	READFILE: DO WHILE (.NOT. ExistInFile)
+
+		! Initial deferred-length string
+		ALLOCATE (CHARACTER(LEN=255):: InputFileName)
+
 		WRITE(*,100)
-		100 format('Specify the Input Filename:')
+		100 FORMAT ('Specify the Input Filename:')
 		READ(*,'(A)') InputFileName
+		InputFileName = TRIM(InputFileName)
+
 		INQUIRE(FILE=InputFileName,EXIST=ExistInFile)
+
 		EXISTIF : IF (.NOT. ExistInFile) THEN
 			WRITE(*,110)
-			110 FORMAT(/' *ERROR* FILENAME: Specified input file does not' &
-			 'exist,reinput name.'/)
+			110 FORMAT(/' **ERROR** FILENAME: Specified input file does not' &
+			 ' exist,reinput filename.'/)
+			DEALLOCATE (InputFileName)
 		END IF EXISTIF
+
 	END DO READFILE
+
 	WRITE(RunDIMSD,120) InputFileName
-	120 FORMAT('The Input Filename is : "', A,'"')
+	120 FORMAT('The Input Filename is : "', A,'"'/ )
 
 	CALL ReadPara(InputFileName)
 
@@ -77,4 +91,6 @@ END IF OPENIF
 
 CLOSE(UNIT=RunDIMSD)
 
-end program MAIN
+DEALLOCATE (InputFileName)
+
+END PROGRAM MAIN

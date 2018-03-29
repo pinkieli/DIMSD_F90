@@ -1,4 +1,4 @@
-LOGICAL FUNCTION cksep(X)
+LOGICAL FUNCTION Cksep(X)
 !----------------------------------------------------------------------------------
 !      Purpose: Check for existence of separator characters in data.
 !      Inputs:
@@ -14,4 +14,4 @@ CHARACTER :: X
 
 cksep = (X.EQ.' ') .OR. (X.EQ.',')
 
-END FUNCTION cksep
+END FUNCTION Cksep

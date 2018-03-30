@@ -1,27 +1,36 @@
 MODULE ModuleParameter
 
 IMPLICIT NONE
-! CHARACTER(12) ::   ForceFileName
 
-! deallocate  in readdata.f90
-CHARACTER(LEN=:), ALLOCATABLE :: K_FileName,M_FileName,C_FileName, &
-					IniD_FileName,IniV_FileName, IntegrationTyle
+! ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+! Define some UNITS
+INTEGER :: InputFile=1000, InputData=1001
+INTEGER :: RunDIMSD=2000
+INTEGER, DIMENSION(:),ALLOCATABLE :: OutputDisp,OutputVelo,OutputAcce
+
+! ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+INTEGER ::  N_DispDof, N_VeloDof, N_AcceDof,NDof, F_Dof, nstep,N_AlgoPara
+
+REAL :: RaylCoef(1:2), dt, TotalTime,NodalForceId
+
+LOGICAL :: DispFlag=.false., VeloFlag=.false.,&
+		    AcceFlag=.false.,C_Exist=.false.
 
 CHARACTER(4) :: M_Type, C_Type, IniD_Type, IniV_Type, F_Type
 
-INTEGER ::  N_DispDof, N_VeloDof, N_AcceDof,NDof, F_Dof, nstep,N_AlgoPara
-! MaxOutputDof=5,
-!  deallocate in directtimeintegration.f90
+! ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!  Define ALLOCATABLE variables.
 INTEGER, DIMENSION (:), ALLOCATABLE :: Disp_Dof,Velo_Dof,Acce_Dof,AlgoPara
 
+REAL,DIMENSION(:,:), ALLOCATABLE:: K_Matrix, M_Matrix, C_Matrix
+
+REAL,DIMENSION(:), ALLOCATABLE :: d0Vector, v0Vector, a0Vector
+
+CHARACTER(LEN=:), ALLOCATABLE :: K_FileName,M_FileName,C_FileName, &
+		 IniD_FileName,IniV_FileName, IntegrationTyle
+
 CHARACTER(LEN = 255), DIMENSION (:), ALLOCATABLE :: DispFileName,&
-										VeloFileName,AcceFileName
-
-LOGICAL :: DispFlag=.false., VeloFlag=.false., AcceFlag=.false.,C_Exist=.false.
-
-REAL :: RaylCoef(1:2), dt, TotalTime!, prop_para(1:5)=0.0
-
-! REAL :: TIM_para1=0.0, TIM_para2=0.0, TIM_para3=0.0
+		VeloFileName,AcceFileName
 
 ! In next content, DOF means Degree of Freedom.
 ! K_FileName - name the file where stiff matrix K is stored.
@@ -62,4 +71,4 @@ REAL :: RaylCoef(1:2), dt, TotalTime!, prop_para(1:5)=0.0
 ! prop_para - parameters for proportional force. let a(i)=prop_para(i),i=1,5
 !             propforce(t) = a(1) + a(2)*t + a(3)*sin( a(4)*t + a(5) )
 ! TIM_para1,TIM_para2,TIM_para3 - parameters for Time Integration Method
-end MODULE ModuleParameter
+END MODULE ModuleParameter

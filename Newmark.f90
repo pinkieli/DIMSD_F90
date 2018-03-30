@@ -3,8 +3,8 @@ subroutine Newmark()
 ! Purpose: Newmark Method.
 
 use ModuleParameter
-use ModuleData
-use ModuleIoport
+! use ModuleData
+! use ModuleIoport
 USE Force
 use m_gauss
 

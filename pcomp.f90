@@ -27,7 +27,6 @@ DO I = 1,N
 
 !       Test all permutations of characters for match
           if(IA.ne.IB .and. IA+INC.ne.IB .and. IA.ne.IB+INC ) return
-
 END DO ! I
 
 pcomp = .TRUE.

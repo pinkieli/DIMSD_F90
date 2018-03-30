@@ -28,10 +28,10 @@ The Input Filename is : "testExample"
 
 Current running command is "m"
            Type of mass matrix is :lump
-           Mass matrix in file : m1  
+           Mass matrix in file : m11111111111111111111111  
 
 Current running command is "k"
-           Stiff matrix in file :k1
+           Stiff matrix in file :k1234567890123456789
 
 Current running command is "c"
            Type of damp matrix is :rayl.
@@ -48,7 +48,7 @@ Current running command is "ndof"
            NDof =    2
 
 Current running command is "forc"
-           All nodal external forces are zero
+           External Force is saved in function : Force.f90
 
 Current running command is "meth"
            Selected Direct Time Integration Method is :Newmark
@@ -112,7 +112,7 @@ Compute Rayleigh damping matrix ...
                  0.0000      0.0000
 
 Read data of external force  ...
-           The external force is zero for all free-dom. 
+           The external force is in file :Force.f90. 
 
                                           ========================================
                                                            End to read data files

@@ -1,6 +1,6 @@
 SUBROUTINE CloseOutFiles()
 ! Purpose: CLOSE  output files
-USE ModuleIoport
+! USE ModuleIoport
 USE ModuleParameter
 
 IMPLICIT NONE

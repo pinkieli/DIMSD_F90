@@ -1,6 +1,6 @@
 SUBROUTINE DIMSD_F90()
 
-USE ModuleIoPort
+USE ModuleParameter
 
 IMPLICIT NONE
 

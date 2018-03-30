@@ -14,7 +14,7 @@ SUBROUTINE ReadPara(InputFileName)
 !		Command2Number.f90											|
 !\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 USE ModuleParameter
-USE ModuleIoPort
+! USE ModuleIoPort
 
 IMPLICIT NONE
 

@@ -1,8 +1,8 @@
 SUBROUTINE DirectTimeIntegration ()
 	!USE linear_operators
 USE ModuleParameter
-USE ModuleData
-USE ModuleIoport
+! USE ModuleData
+! USE ModuleIoport
 USE Force
 USE m_gauss
 

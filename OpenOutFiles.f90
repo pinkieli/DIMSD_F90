@@ -11,7 +11,7 @@ SUBROUTINE OpenOutFiles()
 !		Command2Number.f90											|
 !\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ |
 
-USE ModuleIoport
+! USE ModuleIoport
 USE ModuleParameter
 
 IMPLICIT NONE

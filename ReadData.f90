@@ -11,8 +11,8 @@ SUBROUTINE ReadData()
 !		Command2Number.f90											|
 !\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 USE ModuleParameter
-USE ModuleIoPort
-USE ModuleData
+! USE ModuleIoPort
+! USE ModuleData
 
 IMPLICIT NONE
 

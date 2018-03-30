@@ -22,8 +22,8 @@ IF (DispFlag) THEN
 		OPEN(UNIT=OutputDisp(I), FILE=DispFileName(I), STATUS='UNKNOWN')
 	END DO
 END IF
-		
-IF (VeloFlag)  THEN
+
+IF (VeloFlag) THEN
 	DO I=1,N_VeloDof
 		OPEN(UNIT=OutputVelo(I), FILE=VeloFileName(I), STATUS='UNKNOWN')
 	END DO

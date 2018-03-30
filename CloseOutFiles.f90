@@ -25,4 +25,6 @@ IF(AcceFlag) THEN
 	END DO
 END IF
 
+DEALLOCATE(OutputDisp,OutputVelo,OutputAcce)
+
 END SUBROUTINE CloseOutFiles

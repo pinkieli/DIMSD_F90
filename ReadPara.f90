@@ -78,27 +78,32 @@ FILEOPEN: IF (IERROR == 0) THEN
 			CALL ReadDampMatrix
 
 		CASE(5) ! 'inid' - initial displacement
-			CALL ReadInitialPara(IniD_type, IniD_filename)
+			CALL ReadInitialPara(Command)
 
 		CASE(6) ! 'iniv' - initial velocity
-			CALL ReadInitialPara(IniV_type, IniV_filename)
+			CALL ReadInitialPara(Command)
 
 		CASE(7) ! 'dt  '
 			READ(String(I+1:LSS), *) dt
 			WRITE(RunDIMSD, 1113) dt
 			1113 FORMAT (11X,'dt = ',F10.2,' (sec.)')
+
 		CASE(8) ! 'time'
 			READ(String(I+1:LSS), *) TotalTime
 			WRITE(RunDIMSD, 1112)  TotalTime
 			1112 FORMAT (11X,'Time = ',F10.2,' (sec.)')
+
 		CASE(9) ! 'disp' - parameters of displacement outputs
-			CALL ReadOutputPara(DispFlag,N_DispDof,Disp_Dof,DispFileName)
+			! CALL ReadOutputPara(DispFlag,N_DispDof,Disp_Dof,DispFileName)
+			CALL ReadOutputDisp()
 
 		CASE(10) ! 'velo' - parameters of velocity outputs
-			CALL ReadOutputPara(VeloFlag,N_VeloDof,Velo_Dof,VeloFileName)
+			! CALL ReadOutputPara(VeloFlag,N_VeloDof,Velo_Dof,VeloFileName)
+			CALL ReadOutputVelo()
 
 		CASE(11) ! 'acce' - parameters of acceleration outputs
-			CALL ReadOutputPara(AcceFlag,N_AcceDof,Acce_Dof,AcceFileName)
+			! CALL ReadOutputPara(AcceFlag,N_AcceDof,Acce_Dof,AcceFileName)
+			CALL ReadOutputAcce()
 
 		CASE(12) ! 'ndof' - total number of degree of freedom (in space)
 			READ(String(I+1:LSS), '(I4)') NDof
@@ -106,14 +111,14 @@ FILEOPEN: IF (IERROR == 0) THEN
 			1111 FORMAT (11X,'NDof = ',I4)
 
  		CASE(13) ! 'meth' - Time Integration method
-			CALL ReadMethodPara
-
-		CASE(14) ! 'fpro' - parameters of propotional force
-			CALL ReadPropPara
+			CALL ReadMethodPara()
+!========================================================================
+		! CASE(14) ! 'fpro' - parameters of propotional force
+		! 	CALL ReadPropPara()
 
 		CASE(15) ! 'forc' - Read nodal force information
-			CALL ReadNodalForce
-
+			CALL ReadNodalForce()
+!========================================================================
 		CASE DEFAULT
 			WRITE(*,102) TRIM(Command)
 			WRITE(RunDIMSD,102) TRIM(Command)
@@ -185,40 +190,37 @@ END SUBROUTINE ReadMassMatrix
 SUBROUTINE ReadDampMatrix()
 LOGICAL :: pcomp,Cksep
 
-C_Exist=.true. ! Damp exists.
+C_Exist=.TRUE. ! Damp exists.
 C_Type = String(I+1:I+4)
 
 WRITE(RunDIMSD,107) C_Type
-107  FORMAT(11X, 'Type of damp matrix is :', A)
+107  FORMAT(11X, 'Type of damp matrix is :', A, '.')
 
 CTYPE: IF(pcomp(C_Type,'rayl',4)) THEN
-	CRAYL: DO J=I+1,LSS
-		IF( Cksep(String(J:J)) ) THEN
-			DO K=J+1,LSS
-				IF( Cksep(String(K:K)) ) THEN
 
-					read(String(J+1:K-1), *) RaylCoef(1)
-					read(String(K+1:LSS), *) RaylCoef(2)
+	J = IndexCommaSpace(String(I+1:LSS))
+	J = I+J
+	K = IndexCommaSpace(String(J+1:LSS))
 
-					WRITE(RunDIMSD,108) RaylCoef(1)
-					108 FORMAT(11X, 'The 1st rayleigh coefficient is ', f15.4)
-					WRITE(RunDIMSD,109) RaylCoef(2)
-					109 FORMAT(11X, 'The 2nd rayleigh coefficient is ', f15.4)
-					RETURN
-				END IF
-			END DO
-		END IF
-	END DO CRAYL
+	READ (String(J+1:J+K-1), *) RaylCoef(1)
+	READ (String(J+K+1:LSS), *)     RaylCoef(2)
+
+	WRITE(RunDIMSD,108) RaylCoef(1)
+	108 FORMAT(11X, 'The 1st rayleigh coefficient is ', F15.4)
+	WRITE(RunDIMSD,109) RaylCoef(2)
+	109 FORMAT(11X, 'The 2nd rayleigh coefficient is ', F15.4)
+
+	ALLOCATE( CHARACTER(LEN =1) :: C_FileName)
+	C_FileName = ' '
 
 ELSE IF (pcomp(C_Type, 'file',4)) THEN CTYPE
-	CFILE: DO J= I+1, LSS
-		IF( Cksep(String(J:J)) ) THEN
-			C_filename(1:LSS-J)=String(J+1:LSS)
-			WRITE(RunDIMSD,110) C_filename(1:LSS-J)
-			110 FORMAT(11X, 'Damping matrix in file :---> ', A)
-			RETURN
-		END IF
-	END DO CFILE
+
+	J = IndexCommaSpace(String(I+1:LSS))
+	J = I+J
+	ALLOCATE( CHARACTER(LEN = LSS-J) :: C_FileName)
+	C_filename(1:LSS-J)=String(J+1:LSS)
+	WRITE(RunDIMSD,110) C_filename(1:LSS-J)
+	110 FORMAT(11X, 'Damping matrix in file : ', A)
 
 END IF CTYPE
 
@@ -226,186 +228,329 @@ END SUBROUTINE ReadDampMatrix
 !
 !===================================================================
 !
-SUBROUTINE ReadInitialPara(IniType, IniFile)
+SUBROUTINE ReadInitialPara(COMM)
 ! Purpose: read parameters for initial conditions
 ! Outputs:
 !          IniType - type of initial conditions ( 'zero' or 'file')
 !          IniFile - name of the file where non-zero initial conditions are stored.
 
+! CALL ReadInitialPara(IniD_type, IniD_filename)
+CHARACTER(LEN=4), INTENT(IN) :: COMM
 CHARACTER(LEN=4) :: IniType
-CHARACTER(LEN=12) ::  IniFile
 
-LOGICAL :: Cksep
+LOGICAL :: pcomp
 
 IniType = String(I+1:I+4)
-WRITE(RunDIMSD,112) IniType
-112  FORMAT(11X, 'Method of specifying initial condition is :',A)
 
-DO J= I+1, LSS
-	IF( Cksep(String(J:J)) ) THEN
-		IniFile(1:LSS-J)=String(J+1:LSS)
-		WRITE(RunDIMSD,111) IniFile(1:LSS-J)
-		111 FORMAT(11X, 'Data in file : ', A)
-		RETURN
+IF (pcomp(IniType,'zero',4)) THEN
+
+	IF (pcomp(COMM,'inid',4)) THEN
+		IniD_Type = IniType
+		WRITE(RunDIMSD,112)
+		112  FORMAT(11X, 'The initial displacement conditions are zero.')
+		ALLOCATE( CHARACTER(LEN = 1) :: IniD_FileName)
+		IniD_FileName = ' '
+	ELSE
+		IniV_Type = IniType
+		WRITE(RunDIMSD,114)
+		114  FORMAT(11X, 'The initial velocity conditions are zero.')
+		ALLOCATE( CHARACTER(LEN = 1) :: IniV_FileName)
+		IniV_FileName = ' '
 	END IF
-END DO
+
+ELSE IF (pcomp(IniType,'FILE',4)) THEN
+
+	IF (pcomp(COMM,'inid',4)) THEN
+		IniD_Type = IniType
+		ALLOCATE( CHARACTER(LEN = LSS-10) :: IniD_FileName)
+		IniD_FileName = String(11:LSS)
+		WRITE(RunDIMSD,115) IniD_FileName
+		115  FORMAT(11X, 'The initial displacement conditions are in file : '&
+			A, '.')
+	ELSE
+		IniV_Type = IniType
+		ALLOCATE( CHARACTER(LEN = LSS-10) :: IniV_FileName)
+		IniV_FileName = String(11:LSS)
+		WRITE(RunDIMSD,116) IniV_FileName
+		116  FORMAT(11X, 'The initial velocity conditions are in file : '&
+			A, '.')
+	END IF
+
+ELSE
+	WRITE(*,117) InputFileName
+	WRITE(RunDIMSD,117) InputFileName
+	117 FORMAT (1X,'** ERROR ** : There is a wrong command line about ' &
+		'"inid" or "iniv"in file :',A, '.')
+	STOP
+END IF
 
 END SUBROUTINE ReadInitialPara
-!
-!===================================================================
-!
-SUBROUTINE ReadOutputPara(OutputFlag, N_OutputDof, OutputDof, OutputFile)
-! Purpose: read parameters for output macro command, such as 'disp','velo' and 'acce'
-! Outputs:
-!           OutputFlag - .true. means results of this type will be outputted.
-!		  	OutputDof  - which degree of freedom DO you want ouput?
-!			OutputFile - name of the file to which the results will be wrote.
-LOGICAL :: OutputFlag
-INTEGER, DIMENSION(MaxOutputDof) :: OutputDof
-INTEGER :: N_OutputDof, k2
-CHARACTER(12), DIMENSION(MaxOutputDof) :: OutputFile
 
-LOGICAL :: Cksep
-
-OutputFlag = .TRUE.
-N_OutputDof=0
-
-DO J=I+1,LSS
-	IF( Cksep(String(J:J)) ) N_OutputDof = N_OutputDof + 1
-END DO
-
-N_OutputDof = int((N_OutputDof +1)/2)  ! total number of dofs to be outputted.
-N_OutputDof = min(N_OutputDof, MaxOutputDof)
-
-WRITE(RunDIMSD,121) N_OutputDof
-121 FORMAT(11X,'Total number of outputted DOF is:', i2, &
-				/,11X, 'No.',4X,'Number of DOF',4X,'Filename',&
-				/,10X, '---',4X,'--------------',3X,'---------')
-!
-k2=1
-J=I+1
-
-DO while(k2 .le. N_OutputDof)
-	J=J+1
-	IF(Cksep(String(J:J))) THEN  ! find the separator after the interger No.k2
-		K=J+1
-		DO while (.not. Cksep(String(K:K)))
-			K=K+1
-		END DO
-
-		read(String(I+1:J-1), '(i3)') OutputDof(k2)
-		OutputFile(k2)=String(J+1:K-1)
-		WRITE(RunDIMSD, 122) k2,OutputDof(k2),OutputFile(k2)
-		122 FORMAT(11X,i2,18X,i4,21X,a12)
-
-		k2=k2+1
-		I=K
-		J=I+1
-
-	END IF
-END DO
-
-END SUBROUTINE ReadOutputPara
 !
 !===================================================================
 !
 SUBROUTINE ReadMethodPara()
 ! Declare local variables
 LOGICAL :: pcomp,Cksep
-INTEGER :: k2
+INTEGER :: K2
 
-IntegrationTyle = String(I+1:I+4)
+J = IndexCommaSpace(String(I+1:LSS+1))
+
+ALLOCATE(CHARACTER(LEN=J-1):: IntegrationTyle)
+IntegrationTyle = String(I+1:I+J-1)
+
+! IntegrationTyle = String(I+1:I+4)
 WRITE(*,201) IntegrationTyle
 201 FORMAT(1X,'Selected Direct Time Integration Method is :', A)
 WRITE(RunDIMSD,202) IntegrationTyle
 202 FORMAT(11X,'Selected Direct Time Integration Method is :', A)
 
-DO J=I+1,LSS  ! search for the 2nd separator, after which is the TIM_para1
-	IF( Cksep(String(J:J)) ) THEN
-		! find the 2nd separator.
-		DO K=J+1,LSS
-			! search for the 3rd separator, after which is the TIM_para2
-			IF( Cksep(String(K:K)) ) THEN
-				! find the 3rd separator.
-				READ(String(J+1:K-1), '(F5.2)') TIM_para1
-				DO k2=K+1,LSS
-					! search for the 4th separator, after which is the TIM_para3
-					IF( Cksep(String(k2:k2)) ) THEN
-						! find the 4th separator.
-						READ(String(K+1:k2-1), '(F5.2)') TIM_para2
-						READ(String(k2+1:LSS), '(F5.2)') TIM_para3
-						RETURN
-					END IF
-				END DO
-				! cann't find the 4th separator, so there are only 2 parameters.
-		                READ(String(K+1:LSS), '(F5.2)') TIM_para2
-				RETURN
-			 END IF
-		END DO
-		! cann't find the 3rd separator, so there is only one parameter in this line.
-		READ(String(J+1:LSS),'(F5.2)') TIM_para1
-		RETURN
-	END IF
+I = I+J
+K2 = I
+
+!
+! COMPUATE THE NUMBER OF INTEGRATIONAL PARAMETERS.
+!
+N_AlgoPara=0
+DO WHILE (K2 .LE. LSS)
+	J = IndexCommaSpace(String(K2+1:LSS+1))
+	N_AlgoPara = N_AlgoPara + 1
+	K2 = K2 + J
+END DO
+
+ALLOCATE(AlgoPara(N_AlgoPara))
+
+DO K = 1,N_AlgoPara
+	J = IndexCommaSpace(String(I+1:K2))
+	READ (String(I+1:I+J-1), '(F6.3)') AlgoPara(K)
+	I = I+J
 END DO
 
 END SUBROUTINE ReadMethodPara
 !
 !===================================================================
-!
-SUBROUTINE ReadPropPara()
-!IMPLICIT NONE
-INTEGER :: iprop
+! !
+! SUBROUTINE ReadPropPara()
+! !IMPLICIT NONE
+! INTEGER :: iprop
 
-READ(String(I+1:LSS), *) (prop_para(iprop),iprop=1,5)
+! READ(String(I+1:LSS), *) (prop_para(iprop),iprop=1,5)
 
-WRITE(RunDIMSD,211) (prop_para(iprop),iprop=1,5)
-211 FORMAT(11X, 'Parameters of proptational force :',/,6X,5f12.4)
+! WRITE(RunDIMSD,211) (prop_para(iprop),iprop=1,5)
+! 211 FORMAT(11X, 'Parameters of proptational force :',/,6X,5f12.4)
 
-END SUBROUTINE ReadPropPara
-!
+! END SUBROUTINE ReadPropPara
+! !
 !===================================================================
 !
 SUBROUTINE ReadNodalForce()
 !implicit none
-LOGICAL :: pcomp,Cksep
+LOGICAL :: pcomp!,Cksep
 
-F_Type=String(I+1:I+4)
+! J = IndexCommaSpace(String(I+1:LSS+1))
+F_Type = String(I+1:I+4)
 
-WRITE(RunDIMSD,141) F_Type
-141 FORMAT(11X, 'Type of nodal force ID is : ', A4)
+! WRITE(RunDIMSD,141)
+! 141 FORMAT(/, 'Read data of external force... ')
 
-IF(pcomp(F_Type, 'file', 4)) THEN
-	DO J= I+1, LSS
-		IF( Cksep(String(J:J)) ) THEN
-			ForceFileName(1:LSS-J)=String(J+1:LSS)
-			WRITE(RunDIMSD, 142) ForceFileName(1:LSS-J)
-			142 FORMAT(11X, 'Nodal force ID in file : ', A)
-			RETURN
-		END IF
-	END DO
+IF(pcomp(F_Type,'file', 4)) THEN
+	! DO J= I+1, LSS
+	! 	IF( Cksep(String(J:J)) ) THEN
+			! ForceFileName(1:LSS-J)=String(J+1:LSS)
+WRITE(RunDIMSD, 142) !ForceFileName(1:LSS-J)
+142 FORMAT(11X, 'External Force is saved in function : Force.f90')
+	! 	END IF
+	! END DO
 
-ELSE IF (pcomp(F_Type, 'sing', 4)) THEN
-	DO J= I+1, LSS
-		IF( Cksep(String(J:J)) ) THEN
-			READ(String(J+1:LSS), '(i3)') F_Dof
-			WRITE(RunDIMSD,143) F_Dof
-			143 FORMAT(11X,'Nodal force is imposed on DOF ', I3)
-			RETURN
-		END IF
-	END DO
+! ELSE IF (pcomp(F_Type, 'single', 4)) THEN
 
-ELSE IF(pcomp(F_Type, 'zero', 4) .OR. pcomp(F_Type, '    ', 4)) THEN
+! 	DO J= I+1, LSS
+! 		IF( Cksep(String(J:J)) ) THEN
+! 			READ(String(J+1:LSS), '(i3)') F_Dof
+! 			WRITE(RunDIMSD,143) F_Dof
+! 			143 FORMAT(11X,'Nodal force is imposed on DOF ', I3)
+! 			RETURN
+! 		END IF
+! 	END DO
+
+ELSE IF(pcomp(F_Type,'zero', 4) .OR. pcomp(F_Type, '    ', 4)) THEN
 	WRITE(RunDIMSD,144)
-	144 FORMAT(11X,'All nodal forces are zero')
+	144 FORMAT(11X,'All nodal external forces are zero')
 
 ELSE
 	WRITE(RunDIMSD,*) '** Error **: the type of nodal force is wrong !!!'
 	WRITE(RunDIMSD,*) 'The type of nodal force is : ', F_Type
 	STOP '** Error ** : the type of nodal force is wrong !!!'
+
 END IF
 
 END SUBROUTINE ReadNodalForce
+
 !===================================================================
+
+SUBROUTINE ReadOutputDisp()
+! Purpose: read parameters for output macro command, such as 'disp','velo' and 'acce'
+INTEGER :: K2
+
+INTEGER :: IndexCommaSpace
+
+DispFlag = .TRUE.
+N_DispDof=0
+
+K2 = I
+J = INDEX(String(K2+1:LSS),',')
+DO WHILE (J .NE. 0)
+	N_DispDof = N_DispDof + 1
+	K2 = K2+J
+	J = INDEX(String(K2+1:LSS),',')
+END DO
+
+N_DispDof = int((N_DispDof +1.0)/2.0)
+
+ALLOCATE(OutputDisp(N_DispDof))
+OutputDisp = 10000
+DO K2 = 1,N_DispDof
+	OutputDisp(K2) = OutputDisp(K2) +K2
+END DO
+
+ALLOCATE(Disp_Dof(N_DispDof))
+ALLOCATE(DispFileName(N_DispDof))
+
+WRITE(RunDIMSD,121) N_DispDof
+121 FORMAT(11X,'Total number of outputted DOF is:', i2, &
+				/,11X, 'No.',4X,'Number of DOF',4X,'Filename',&
+				/,10X, '---',4X,'--------------',3X,'---------')
+
+K2=1
+DO while(K2 .LE. N_DispDof)
+	J = INDEX(String(I+1:LSS),',')
+	J = I+J
+
+	K = IndexCommaSpace(String(J+1:LSS+1))
+	K = K+J
+
+	READ (String(I+1:J-1), '(I3)') Disp_Dof(K2)
+	DispFileName(K2)=String(J+1:K-1)
+	WRITE (RunDIMSD, 122) K2,Disp_Dof(K2),TRIM(DispFileName(K2))
+	122 FORMAT(11X,i2,18X,i4,21X,A)
+
+	K2 = K2+1
+	I = K
+
+END DO
+
+END SUBROUTINE ReadOutputDisp
+
+!========================================================
+
+SUBROUTINE ReadOutputVelo()
+! Purpose: read parameters for output macro command, such as 'disp','velo' and 'acce'
+INTEGER :: K2
+
+INTEGER :: IndexCommaSpace
+
+VeloFlag = .TRUE.
+N_VeloDof=0
+
+K2 = I
+J = INDEX(String(K2+1:LSS),',')
+DO WHILE (J .NE. 0)
+	N_VeloDof = N_VeloDof + 1
+	K2 = K2+J
+	J = INDEX(String(K2+1:LSS),',')
+END DO
+
+N_VeloDof = int((N_VeloDof +1.0)/2.0)  ! total number of dofs to be outputted.
+
+ALLOCATE(OutputVelo(N_VeloDof))
+OutputVelo = 20000
+DO K2 = 1,N_VeloDof
+	OutputVelo(K2) = OutputVelo(K2) +K2
+END DO
+
+ALLOCATE(Velo_Dof(N_VeloDof))
+ALLOCATE(VeloFileName(N_VeloDof))
+
+WRITE(RunDIMSD,121) N_VeloDof
+121 FORMAT(11X,'Total number of outputted DOF is:', i2, &
+				/,11X, 'No.',4X,'Number of DOF',4X,'Filename',&
+				/,10X, '---',4X,'--------------',3X,'---------')
+
+K2=1
+DO while(K2 .LE. N_VeloDof)
+	J = INDEX(String(I+1:LSS),',')
+	J = I+J
+
+	K = IndexCommaSpace(String(J+1:LSS+1))
+	K = K+J
+
+	READ (String(I+1:J-1), '(I3)') Velo_Dof(K2)
+	VeloFileName(K2)=String(J+1:K-1)
+	WRITE (RunDIMSD, 122) K2,Velo_Dof(K2),TRIM(VeloFileName(K2))
+	122 FORMAT(11X,i2,18X,i4,21X,A)
+
+	K2 = K2+1
+	I = K
+
+END DO
+
+END SUBROUTINE ReadOutputVelo
+
+!=============================================================================
+
+SUBROUTINE ReadOutputAcce()
+! Purpose: read parameters for output macro command, such as 'disp','velo' and 'acce'
+INTEGER :: K2
+
+INTEGER :: IndexCommaSpace
+
+AcceFlag = .TRUE.
+N_AcceDof=0
+
+K2 = I
+J = INDEX(String(K2+1:LSS),',')
+DO WHILE (J .NE. 0)
+	N_AcceDof = N_AcceDof + 1
+	K2 = K2+J
+	J = INDEX(String(K2+1:LSS),',')
+END DO
+
+N_AcceDof = int((N_AcceDof +1.0)/2.0)  ! total number of dofs to be outputted.
+
+ALLOCATE(OutputAcce(N_AcceDof))
+OutputAcce = 30000
+DO K2 = 1,N_AcceDof
+	OutputAcce(K2) = OutputAcce(K2) +K2
+END DO
+
+ALLOCATE(Acce_Dof(N_AcceDof))
+ALLOCATE(AcceFileName(N_AcceDof))
+
+WRITE(RunDIMSD,121) N_AcceDof
+121 FORMAT(11X,'Total number of outputted DOF is:', i2, &
+				/,11X, 'No.',4X,'Number of DOF',4X,'Filename',&
+				/,10X, '---',4X,'--------------',3X,'---------')
+
+K2=1
+DO while(K2 .LE. N_AcceDof)
+	J = INDEX(String(I+1:LSS),',')
+	J = I+J
+
+	K = IndexCommaSpace(String(J+1:LSS+1))
+	K = K+J
+
+	READ (String(I+1:J-1), '(I3)') Acce_Dof(K2)
+	AcceFileName(K2)=String(J+1:K-1)
+	WRITE (RunDIMSD, 122) K2,Acce_Dof(K2),TRIM(AcceFileName(K2))
+	122 FORMAT(11X,i2,18X,i4,21X,A)
+
+	K2 = K2+1
+	I = K
+
+END DO
+
+END SUBROUTINE ReadOutputAcce
+
 ! END OF SUBROUTINE ReadPara
 
 END SUBROUTINE ReadPara

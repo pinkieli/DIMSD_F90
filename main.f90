@@ -32,6 +32,7 @@ PROGRAM MAIN
 !		DirectTimeIntegration.f90												|
 !\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 USE ModuleIoPort
+USE ModuleParameter
 
 IMPLICIT NONE
 
@@ -91,6 +92,6 @@ END IF OPENIF
 
 CLOSE(UNIT=RunDIMSD)
 
-DEALLOCATE (InputFileName)
+DEALLOCATE (InputFileName,IntegrationTyle)
 
 END PROGRAM MAIN

@@ -1,22 +1,22 @@
 
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DIMSD_F90 v1.0 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-      * * DIMSD_F90 v1.0* * : A Fortran package for solving structural dynamics  by		
-						using direct Time Integration methods.        			 		
+      * * DIMSD_F90 v1.0* * : A Fortran package for solving structural dynamics  by
+						using direct Time Integration methods.
 
        Copyright (c) 2018. Jin-ze Li 
        All rights reserved.
 
  ===============================================================================
 
-	This version was developed and run on Gfortran  6.3.0 20170516 (Debian)		         
-	Date: May 25, 2018                                                     							          		
-	Author: Jin-ze Li   ( Harbin Institute of Technology, China )          		          		
-	For any problems with the code, please contact the author:                                       		
-	E-mail: pinkie.ljz@gmail.com                                        						        		
-	       	       pinkie_li@163.com   													
+	This version was developed and run on Gfortran  6.3.0 20170516 (Debian)
+	Date: May 25, 2018 
+	Author: Jin-ze Li   ( Harbin Institute of Technology, China )
+	For any problems with the code, please contact the author:
+	E-mail: pinkie.ljz@gmail.com 
+	       	       pinkie_li@163.com 
 
-	Note: this code comes with no guarantee or warranty of any kind.					
+	Note: this code comes with no guarantee or warranty of any kind.
 
 ===============================================================================
 
@@ -33,25 +33,25 @@ Current running command is "m"
 Current running command is "k"
            Stiff matrix in file :k1234567890123456789
 
+Current running command is "c"
+           Type of damp matrix is :rayl.
+           The 1st rayleigh coefficient is          0.0000
+           The 2nd rayleigh coefficient is          0.0000
+
 Current running command is "inid"
-           Method of specifying initial condition is :zero
+           The initial displacement conditions are zero.
 
 Current running command is "iniv"
-           Method of specifying initial condition is :zero
+           The initial velocity conditions are zero.
 
 Current running command is "ndof"
            NDof =    2
 
-Current running command is "fpro"
-           Parameters of proptational force :
-           10.0000      0.0000      0.0000      0.0000      0.0000
-
 Current running command is "forc"
-           Type of nodal force ID is : sing
-           Nodal force is imposed on DOF   2
+           External Force is saved in function : Force.f90
 
 Current running command is "meth"
-           Selected Direct Time Integration Method is :newm
+           Selected Direct Time Integration Method is :Newmark
 
 Current running command is "dt"
            dt =       0.28 (sec.)
@@ -63,15 +63,22 @@ Current running command is "disp"
            Total number of outputted DOF is: 2
            No.    Number of DOF    Filename
           ---    --------------   ---------
-            1                     1                     disp1       
-            2                     2                     disp2       
+            1                     1                     disp1234567891234561
+            2                     2                     disp2
 
 Current running command is "velo"
            Total number of outputted DOF is: 2
            No.    Number of DOF    Filename
           ---    --------------   ---------
-            1                     2                     velo2       
-            2                     1                     velo1       
+            1                     2                     velo2
+            2                     1                     velo1
+
+Current running command is "acce"
+           Total number of outputted DOF is: 2
+           No.    Number of DOF    Filename
+          ---    --------------   ---------
+            1                     1                     acce1
+            2                     2                     acce2
 
 Current running command is "end"
 
@@ -79,27 +86,48 @@ Current running command is "end"
                                             End of reading commands and parameters
                                           ========================================
 
-====== Begin to read data file ... ======
+
+                                          ========================================
+                                                        Begin to read data files
+                                          ========================================
 
 Read data of stiff matrix...
-    Stiff matrix is :
-          6.0000     -2.0000
-         -2.0000      4.0000
+           Stiff matrix is :
+                 6.0000     -2.0000
+                -2.0000      4.0000
 
 Read data of mass matrix...
-    Lumped mass matrix is :
-          2.0000      1.0000
-    Damping matrix is :
-          0.0000      0.0000
-          0.0000      0.0000
+           Lumped mass matrix is :
+                 2.0000      1.0000
 
------- End of reading data file ------
+Compute Rayleigh damping matrix ...
+           Damping matrix is :
+                 0.0000      0.0000
+                 0.0000      0.0000
 
-====== Begin to compute ... ======
+           Initial displacement is :
+                 0.0000      0.0000
 
-Total number of time intervals is : 100
+           Initial velocity is :
+                 0.0000      0.0000
+
+Read data of external force  ...
+           The external force is in file :Force.f90. 
+
+                                          ========================================
+                                                           End to read data files
+                                          ========================================
+
+
+                                          ========================================
+                                                              Begin to compute
+                                          ========================================
+
+Total number of time intervals is :   100
 
 Run Newmark method for time integration...
-    gamma =  0.5000        beta =  0.2500
+           gamma =  0.5000        beta =  0.2500
 
------- END of computation ------
+                                          ========================================
+                                                              End to compute
+                                          ========================================

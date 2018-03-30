@@ -25,11 +25,19 @@ String = ADJUSTL(String)
 111   J = LEN_TRIM(String)
 I = INDEX(String,' ')
 IF (I .LE. J) THEN
+
 	String(I:J-1) = String(I+1:J)
 	String(J:J) = ' '
 	GO TO 111
+
 ELSE
+
 	LengthCL = LEN_TRIM(String)
+	IF (String(LengthCL:LengthCL) .EQ. ',') THEN
+		String(LengthCL:LengthCL) = ' '
+		LengthCL = LEN_TRIM(String)
+	END IF
+
 END IF
 
 END SUBROUTINE String2CommandLine

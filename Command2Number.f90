@@ -1,4 +1,4 @@
-INTEGER FUNCTION Command2Number(CommandName) 
+INTEGER FUNCTION Command2Number(CommandName)
 
 ! -------------------------------------------------------------------------
 !    Purpose: Calculate the sequence number of a macro in the macro list.

@@ -1,14 +1,14 @@
-subroutine TIM_Newmark()
+subroutine Newmark()
 
 ! Purpose: Newmark Method.
-	!use linear_operators
-	use ModuleParameter
-	use ModuleData
-	use ModuleIoport
 
-	use m_gauss
+use ModuleParameter
+use ModuleData
+use ModuleIoport
+USE Force
+use m_gauss
 
-	implicit none
+implicit none
 	integer i
 	real :: c0, c1, c2, c3, c4, c5, c6, c7,t
 	real ::K_eff(1:NDof,1:NDof), &
@@ -16,23 +16,30 @@ subroutine TIM_Newmark()
             a1(1:NDof),d2(1:NDof), v2(1:NDof), a2(1:NDof), Mcb(1:NDof), &
             Mc(1:NDof),Cc(1:NDof),Ccb(1:NDof)
 	real :: gamma,beta
-	real PropForce
-	!==================================
-	!integer, DIMENSION(NDof) :: IPIV
-	!integer :: INFO
-!====================================================
+	! real :: ExternalForce
 
-	if(TIM_para1 .eq. 0.0) then
+	! real, DIMENSION(N_AlgoPara), intent(in) :: para
+
+	IF (N_AlgoPara .EQ. 0) THEN
 		gamma = 0.5
-	else
-		gamma=TIM_para1
-	endif
-	if(TIM_para2 .eq. 0.0) then
 		beta = 0.25
-	else
-		beta=TIM_para2
-	endif
+	ELSE
+		gamma = AlgoPara(1)
+		beta = AlgoPara(2)
+	END IF
+
 	write(RunDIMSD,301) gamma, beta
+	! if(TIM_para1 .eq. 0.0) then
+	! 	gamma = 0.5
+	! else
+	! 	gamma=TIM_para1
+	! endif
+	! if(TIM_para2 .eq. 0.0) then
+	! 	beta = 0.25
+	! else
+	! 	beta=TIM_para2
+	! endif
+
 
 	c0=1.0/(beta*dt*dt); c1=gamma/beta/dt;
     c2=1.0/beta/dt; c3=0.5/beta-1.0
@@ -49,7 +56,7 @@ subroutine TIM_Newmark()
 	t=0.0
 	do i=1,nstep
 		t=t+dt
-		f_t=PropForce(t)*NodalForceId
+		f_t=ExternalForce(t)*NodalForceId
 		!==============================
 		Mcb = c0*d1 + c2*v1 +c3*a1
 		Ccb = c1*d1 + c4*v1 +c5*a1
@@ -76,6 +83,7 @@ subroutine TIM_Newmark()
 		d1=d2; v1=v2; a1=a2
 	end do
 
-301 format(4X,'gamma = ',f7.4,8X,'beta = ',f7.4)
+301 format(11X,'gamma = ',f7.4,8X,'beta = ',f7.4)
 
-end subroutine TIM_Newmark
+
+end subroutine Newmark

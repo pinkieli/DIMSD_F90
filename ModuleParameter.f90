@@ -1,26 +1,27 @@
 MODULE ModuleParameter
 
 IMPLICIT NONE
-CHARACTER(12) ::  IniD_FileName,   &
-                 		IniV_FileName, ForceFileName
-CHARACTER(LEN=:), ALLOCATABLE :: K_FileName,M_FileName,C_FileName,
+! CHARACTER(12) ::   ForceFileName
 
-CHARACTER(4) :: M_Type, C_Type, IniD_Type, IniV_Type, IntegrationTyle, F_Type
+! deallocate  in readdata.f90
+CHARACTER(LEN=:), ALLOCATABLE :: K_FileName,M_FileName,C_FileName, &
+					IniD_FileName,IniV_FileName, IntegrationTyle
 
-INTEGER :: MaxOutputDof=5, N_DispDof, N_VeloDof, N_AcceDof,   &
-           		NDof, F_Dof, nstep
+CHARACTER(4) :: M_Type, C_Type, IniD_Type, IniV_Type, F_Type
 
-INTEGER, dimension (5) :: Disp_Dof, Velo_Dof, Acce_Dof
+INTEGER ::  N_DispDof, N_VeloDof, N_AcceDof,NDof, F_Dof, nstep,N_AlgoPara
+! MaxOutputDof=5,
+!  deallocate in directtimeintegration.f90
+INTEGER, DIMENSION (:), ALLOCATABLE :: Disp_Dof,Velo_Dof,Acce_Dof,AlgoPara
 
-CHARACTER(12), dimension (5) :: DispFileName, VeloFileName,   &
-               			AcceFileName
+CHARACTER(LEN = 255), DIMENSION (:), ALLOCATABLE :: DispFileName,&
+										VeloFileName,AcceFileName
 
-LOGICAL :: DispFlag=.false., VeloFlag=.false., AcceFlag=.false.,   &
-           			C_Exist=.false.
+LOGICAL :: DispFlag=.false., VeloFlag=.false., AcceFlag=.false.,C_Exist=.false.
 
-REAL :: RaylCoef(1:2), dt, TotalTime, prop_para(1:5)=0.0
+REAL :: RaylCoef(1:2), dt, TotalTime!, prop_para(1:5)=0.0
 
-REAL :: TIM_para1=0.0, TIM_para2=0.0, TIM_para3=0.0
+! REAL :: TIM_para1=0.0, TIM_para2=0.0, TIM_para3=0.0
 
 ! In next content, DOF means Degree of Freedom.
 ! K_FileName - name the file where stiff matrix K is stored.

@@ -1,36 +1,30 @@
 SUBROUTINE ReadPara(InputFileName)
 !///////////////////////////////////////////////////////////////////|
-!	ReadPara														|
-!	 	Read commands in InputFileName and parameters for each 			|
-! 		command.													|
-!	Input:															|
-!		InputFileName --> Name of input file provided by user.			|
-! 																	|
-!	Require:														|
-! 		ModuleParameter.f90											|
-! 		ModuleIoPort.f90											|
-! 		Cksep.f90													|
-! 		Pcomp.f90													|
-!		Command2Number.f90											|
+!	ReadPara
+!	 	Read commands in InputFileName and parameters for each
+! 		command.
+!	Input:
+!		InputFileName --> Name of input file provided by user.
+!
+!	Require:
+! 		ModuleParameter.f90
+! 		ModuleIoPort.f90
+! 		Pcomp.f90
+!		Command2Number.f90
 !\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 USE ModuleParameter
-! USE ModuleIoPort
 
 IMPLICIT NONE
 
 ! Declare local variables.
 CHARACTER (LEN =*), INTENT(IN) :: InputFileName
 CHARACTER (LEN=4) :: Command
-
 CHARACTER (LEN=255) :: String
-! CHARACTER (LEN = :), ALLOCATABLE :: StringStripped
-!CHARACTER(LEN = :), ALLOCATABLE :: String!,StringStripped
-
 LOGICAL :: ExistInFile,EndofFile
 INTEGER :: I,J,K,LSS,IERROR
 
 ! Declare functions.
-LOGICAL :: Cksep, Pcomp
+LOGICAL :: Pcomp
 INTEGER :: Command2Number,IndexCommaSpace
 !
 WRITE(RunDIMSD,100)
@@ -94,15 +88,12 @@ FILEOPEN: IF (IERROR == 0) THEN
 			1112 FORMAT (11X,'Time = ',F10.2,' (sec.)')
 
 		CASE(9) ! 'disp' - parameters of displacement outputs
-			! CALL ReadOutputPara(DispFlag,N_DispDof,Disp_Dof,DispFileName)
 			CALL ReadOutputDisp()
 
 		CASE(10) ! 'velo' - parameters of velocity outputs
-			! CALL ReadOutputPara(VeloFlag,N_VeloDof,Velo_Dof,VeloFileName)
 			CALL ReadOutputVelo()
 
 		CASE(11) ! 'acce' - parameters of acceleration outputs
-			! CALL ReadOutputPara(AcceFlag,N_AcceDof,Acce_Dof,AcceFileName)
 			CALL ReadOutputAcce()
 
 		CASE(12) ! 'ndof' - total number of degree of freedom (in space)
@@ -112,13 +103,10 @@ FILEOPEN: IF (IERROR == 0) THEN
 
  		CASE(13) ! 'meth' - Time Integration method
 			CALL ReadMethodPara()
-!========================================================================
-		! CASE(14) ! 'fpro' - parameters of propotional force
-		! 	CALL ReadPropPara()
 
-		CASE(15) ! 'forc' - Read nodal force information
+		CASE(14) ! 'forc' - Read nodal force information
 			CALL ReadNodalForce()
-!========================================================================
+
 		CASE DEFAULT
 			WRITE(*,102) TRIM(Command)
 			WRITE(RunDIMSD,102) TRIM(Command)
@@ -141,14 +129,15 @@ ELSE FILEOPEN
 
 END IF FILEOPEN
 !
-!###################################################################|
-!													             	   |
-!						SOME OF SUBROUTINES					   |
-!                                        											   |
-!###################################################################|
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+CONTAINS!++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 !
-CONTAINS
-!===================================================================
+!//////////////////////////////////////////////////////////////////|
+!
+! 					Subroutine : ReadStiffMatrix
+!
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 SUBROUTINE ReadStiffMatrix()
 
 ALLOCATE( CHARACTER(LEN = LSS-I) :: K_FileName)
@@ -158,10 +147,14 @@ WRITE(RunDIMSD,131) K_FileName(1:LSS-I)
 131	FORMAT(11X,'Stiff matrix in file :', A)
 
 END SUBROUTINE ReadStiffMatrix
-!===================================================================
+!//////////////////////////////////////////////////////////////////|
+!
+! 					Subroutine : ReadMassMatrix
+!
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 SUBROUTINE ReadMassMatrix()
 
-LOGICAL :: pcomp,Cksep
+LOGICAL :: pcomp
 INTEGER :: IndexCommaSpace
 
 M_Type = String(I+1:I+4)
@@ -186,17 +179,20 @@ ELSE
 END IF
 !
 END SUBROUTINE ReadMassMatrix
-!===================================================================
+!//////////////////////////////////////////////////////////////////|
+!
+! 					Subroutine : ReadDampMatrix
+!
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 SUBROUTINE ReadDampMatrix()
-LOGICAL :: pcomp,Cksep
-
+LOGICAL :: pcomp
 C_Exist=.TRUE. ! Damp exists.
 C_Type = String(I+1:I+4)
 
-WRITE(RunDIMSD,107) C_Type
-107  FORMAT(11X, 'Type of damp matrix is :', A, '.')
-
 CTYPE: IF(pcomp(C_Type,'rayl',4)) THEN
+
+	WRITE(RunDIMSD,107) C_Type
+	107  FORMAT(11X, 'Type of damp matrix is :', A, '.')
 
 	J = IndexCommaSpace(String(I+1:LSS))
 	J = I+J
@@ -225,16 +221,15 @@ ELSE IF (pcomp(C_Type, 'file',4)) THEN CTYPE
 END IF CTYPE
 
 END SUBROUTINE ReadDampMatrix
+!//////////////////////////////////////////////////////////////////|
 !
-!===================================================================
+! 					Subroutine : ReadInitialPara
 !
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 SUBROUTINE ReadInitialPara(COMM)
-! Purpose: read parameters for initial conditions
-! Outputs:
-!          IniType - type of initial conditions ( 'zero' or 'file')
-!          IniFile - name of the file where non-zero initial conditions are stored.
-
-! CALL ReadInitialPara(IniD_type, IniD_filename)
+! Purpose: read parameters for initial conditions.
+! COMM ---> inid : read the initial displacement.
+! 	    ---> iniv : read the initial velocity.
 CHARACTER(LEN=4), INTENT(IN) :: COMM
 CHARACTER(LEN=4) :: IniType
 
@@ -285,13 +280,14 @@ ELSE
 END IF
 
 END SUBROUTINE ReadInitialPara
-
+!//////////////////////////////////////////////////////////////////|
 !
-!===================================================================
+! 					Subroutine : ReadMethodPara
 !
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 SUBROUTINE ReadMethodPara()
 ! Declare local variables
-LOGICAL :: pcomp,Cksep
+LOGICAL :: pcomp
 INTEGER :: K2
 
 J = IndexCommaSpace(String(I+1:LSS+1))
@@ -299,7 +295,6 @@ J = IndexCommaSpace(String(I+1:LSS+1))
 ALLOCATE(CHARACTER(LEN=J-1):: IntegrationTyle)
 IntegrationTyle = String(I+1:I+J-1)
 
-! IntegrationTyle = String(I+1:I+4)
 WRITE(*,201) IntegrationTyle
 201 FORMAT(1X,'Selected Direct Time Integration Method is :', A)
 WRITE(RunDIMSD,202) IntegrationTyle
@@ -307,7 +302,6 @@ WRITE(RunDIMSD,202) IntegrationTyle
 
 I = I+J
 K2 = I
-
 !
 ! COMPUATE THE NUMBER OF INTEGRATIONAL PARAMETERS.
 !
@@ -327,51 +321,20 @@ DO K = 1,N_AlgoPara
 END DO
 
 END SUBROUTINE ReadMethodPara
+!//////////////////////////////////////////////////////////////////|
 !
-!===================================================================
-! !
-! SUBROUTINE ReadPropPara()
-! !IMPLICIT NONE
-! INTEGER :: iprop
-
-! READ(String(I+1:LSS), *) (prop_para(iprop),iprop=1,5)
-
-! WRITE(RunDIMSD,211) (prop_para(iprop),iprop=1,5)
-! 211 FORMAT(11X, 'Parameters of proptational force :',/,6X,5f12.4)
-
-! END SUBROUTINE ReadPropPara
-! !
-!===================================================================
+! 					Subroutine : ReadNodalForce
 !
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 SUBROUTINE ReadNodalForce()
-!implicit none
-LOGICAL :: pcomp!,Cksep
 
-! J = IndexCommaSpace(String(I+1:LSS+1))
+LOGICAL :: pcomp
+
 F_Type = String(I+1:I+4)
 
-! WRITE(RunDIMSD,141)
-! 141 FORMAT(/, 'Read data of external force... ')
-
 IF(pcomp(F_Type,'file', 4)) THEN
-	! DO J= I+1, LSS
-	! 	IF( Cksep(String(J:J)) ) THEN
-			! ForceFileName(1:LSS-J)=String(J+1:LSS)
-WRITE(RunDIMSD, 142) !ForceFileName(1:LSS-J)
-142 FORMAT(11X, 'External Force is saved in function : Force.f90')
-	! 	END IF
-	! END DO
-
-! ELSE IF (pcomp(F_Type, 'single', 4)) THEN
-
-! 	DO J= I+1, LSS
-! 		IF( Cksep(String(J:J)) ) THEN
-! 			READ(String(J+1:LSS), '(i3)') F_Dof
-! 			WRITE(RunDIMSD,143) F_Dof
-! 			143 FORMAT(11X,'Nodal force is imposed on DOF ', I3)
-! 			RETURN
-! 		END IF
-! 	END DO
+	WRITE(RunDIMSD, 142)
+	142 FORMAT(11X, 'External Force is saved in function : Force.f90')
 
 ELSE IF(pcomp(F_Type,'zero', 4) .OR. pcomp(F_Type, '    ', 4)) THEN
 	WRITE(RunDIMSD,144)
@@ -385,11 +348,13 @@ ELSE
 END IF
 
 END SUBROUTINE ReadNodalForce
-
-!===================================================================
-
+!//////////////////////////////////////////////////////////////////|
+!
+! 					Subroutine : ReadOutputDisp
+!
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 SUBROUTINE ReadOutputDisp()
-! Purpose: read parameters for output macro command, such as 'disp','velo' and 'acce'
+
 INTEGER :: K2
 
 INTEGER :: IndexCommaSpace
@@ -405,7 +370,7 @@ DO WHILE (J .NE. 0)
 	J = INDEX(String(K2+1:LSS),',')
 END DO
 
-N_DispDof = int((N_DispDof +1.0)/2.0)
+N_DispDof = INT ((N_DispDof +1.0)/2.0)
 
 ALLOCATE(OutputDisp(N_DispDof))
 OutputDisp = 10000
@@ -440,11 +405,13 @@ DO while(K2 .LE. N_DispDof)
 END DO
 
 END SUBROUTINE ReadOutputDisp
-
-!========================================================
-
+!//////////////////////////////////////////////////////////////////|
+!
+! 					Subroutine : ReadOutputVelo
+!
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 SUBROUTINE ReadOutputVelo()
-! Purpose: read parameters for output macro command, such as 'disp','velo' and 'acce'
+
 INTEGER :: K2
 
 INTEGER :: IndexCommaSpace
@@ -460,7 +427,7 @@ DO WHILE (J .NE. 0)
 	J = INDEX(String(K2+1:LSS),',')
 END DO
 
-N_VeloDof = int((N_VeloDof +1.0)/2.0)  ! total number of dofs to be outputted.
+N_VeloDof = INT ((N_VeloDof +1.0)/2.0)
 
 ALLOCATE(OutputVelo(N_VeloDof))
 OutputVelo = 20000
@@ -495,11 +462,13 @@ DO while(K2 .LE. N_VeloDof)
 END DO
 
 END SUBROUTINE ReadOutputVelo
-
-!=============================================================================
-
+!//////////////////////////////////////////////////////////////////|
+!
+! 					Subroutine : ReadOutputAcce
+!
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 SUBROUTINE ReadOutputAcce()
-! Purpose: read parameters for output macro command, such as 'disp','velo' and 'acce'
+
 INTEGER :: K2
 
 INTEGER :: IndexCommaSpace
@@ -515,7 +484,7 @@ DO WHILE (J .NE. 0)
 	J = INDEX(String(K2+1:LSS),',')
 END DO
 
-N_AcceDof = int((N_AcceDof +1.0)/2.0)  ! total number of dofs to be outputted.
+N_AcceDof = int((N_AcceDof +1.0)/2.0)
 
 ALLOCATE(OutputAcce(N_AcceDof))
 OutputAcce = 30000
@@ -550,7 +519,5 @@ DO while(K2 .LE. N_AcceDof)
 END DO
 
 END SUBROUTINE ReadOutputAcce
-
 ! END OF SUBROUTINE ReadPara
-
 END SUBROUTINE ReadPara

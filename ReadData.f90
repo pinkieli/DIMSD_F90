@@ -1,18 +1,15 @@
 SUBROUTINE ReadData()
 !///////////////////////////////////////////////////////////////////|
-!	ReadPara														|
-!	 	Read data for each parameters in InputFileName					|
-! 																	|
-!	Require:														|
-! 		ModuleParameter.f90											|
-! 		ModuleIoPort.f90											|
-! 		Cksep.f90													|
-! 		Pcomp.f90													|
-!		Command2Number.f90											|
+!	ReadPara
+!	 	Read data for each parameters in InputFileName
+!
+!	Require:
+! 		ModuleParameter.f90
+! 		ModuleIoPort.f90
+! 		Pcomp.f90
+!		Command2Number.f90
 !\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 USE ModuleParameter
-! USE ModuleIoPort
-! USE ModuleData
 
 IMPLICIT NONE
 
@@ -20,19 +17,14 @@ LOGICAL :: InquireFile, pcomp
 INTEGER :: I,J
 
 ALLOCATE( K_Matrix(NDof,NDof), M_Matrix(NDof,NDof), C_Matrix(NDof,NDof))
-ALLOCATE( d0Vector(NDof), v0Vector(NDof))!, NodalForceId(NDof))
+ALLOCATE( d0Vector(NDof), v0Vector(NDof))
 
 WRITE(RunDIMSD, 200)
 200   FORMAT (//,42X,  '========================================'/,&
 			56X,'Begin to read data files'/,&
 			42X,'========================================')
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-! 																v
-!				Read Stiff Matrix from K_FileName.				v
-! 																v
-! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<</
-IF (InquireFile(K_FileName)) THEN ! K_FileName exists
-
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+IF (InquireFile(K_FileName)) THEN
 	WRITE(RunDIMSD, 210)
 	210 FORMAT(/,'Read data of stiff matrix...')
 
@@ -45,18 +37,14 @@ IF (InquireFile(K_FileName)) THEN ! K_FileName exists
 	WRITE(RunDIMSD,N_Format("(11X,<n>f12.4)", NDof )) &
 		((K_Matrix(I,J),J=1,NDof),I=1,NDof)
 
-ELSE ! ................................................................
+ELSE
 	WRITE(*,212) K_FileName
 	WRITE(RunDIMSD, 212)  K_FileName
 	212 FORMAT(1X,'** ERROR **: ',A, 'file is not found ! Check input file!')
 	STOP '** Error ** : The file of Stiff Matrix is not found ! Check input file!'
 
 END IF
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-! 														     v
-!					Read Mass Matrix from M_FileName.		     v
-! 														     v
-! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<</
+! +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 M_Matrix=0.0
 IF (InquireFile(M_FileName)) THEN ! K_FileName exists
 
@@ -81,7 +69,8 @@ IF (InquireFile(M_FileName)) THEN ! K_FileName exists
 
 	ELSE
 		WRITE(RunDIMSD, 223)
-		223 FORMAT(/,'** Error ** : The type of Mass Matrix is wrong! Check input file!')
+		223 FORMAT(/,'** Error ** : The type of Mass Matrix is wrong!' &
+			' Check input file!')
 		STOP '** Error **: The type of Mass Matrix is wrong! Check input file!'
 
 	END IF
@@ -95,16 +84,7 @@ ELSE
 	STOP '**Error** : The file of Mass Matrix is not found ! Check input file!'
 
 END IF
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-! 															v
-!					Construct Damping Matrix.					v
-! 															v
-! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<</
-!
-! IF  C_Type is 'file', read Damping Matrix from C_FileName;
-! IF  C_Type is 'rayl', compute Damping Matrix from K_Matrix and
-! 			M_Matrix.
-!________________________________________________________________
+! +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 IF (C_Exist) THEN
 	IF (pcomp(C_Type, 'file',4)) THEN
 		IF (InquireFile(C_FileName)) THEN
@@ -123,11 +103,12 @@ IF (C_Exist) THEN
 		C_Matrix = K_Matrix*RaylCoef(1) + M_Matrix*RaylCoef(2)
 	ELSE
 		WRITE(RunDIMSD, 232)
-		232 FORMAT(/,'** Error ** : The type of Damping Matrix is wrong! Check input file!')
+		232 FORMAT(/,'** Error ** : The type of Damping Matrix is wrong! '&
+			'Check input file!')
 		STOP '** Error ** : The type of Damping Matrix is wrong! Check input file!'
 	END IF
-ELSE
 
+ELSE
 	C_Matrix = 0.0
 	WRITE(RunDIMSD, 234)
 	234 FORMAT(/,'The damping matrix is omitted, that is zero.')
@@ -138,12 +119,7 @@ WRITE(RunDIMSD,231)
 231 FORMAT(11X,'Damping matrix is :')
 WRITE(RunDIMSD,N_Format("(11X,<n>f12.4)", NDof )) &
 		((C_Matrix(I,J),J=1,NDof),I=1,NDof)
-
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-! 																v
-!					Read Initial Displacement.					v
-! 																v
-! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<</
+! ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 IF (pcomp(IniD_Type, 'file',4)) THEN
 
 	IF (InquireFile(IniD_FileName)) THEN
@@ -171,12 +147,7 @@ ELSE
 	STOP '** Error ** : The type of u0 is wrong! Check input file!'
 
 END IF
-
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-! 																v
-!					Read Initial Velocity.						v
-! 																v
-! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<</
+! +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 IF (pcomp(IniV_Type, 'file',4)) THEN
 
 	IF (InquireFile(IniV_FileName)) THEN
@@ -206,11 +177,7 @@ ELSE
 	STOP '** Error ** : The type of v0 is wrong! Check input file!'
 
 END IF
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-! 																v
-!					Read nodal force ID.							v
-! 																v
-! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<</
+! ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 WRITE(RunDIMSD, 260)
 260 FORMAT(/,'Read data of external force  ...')
 
@@ -226,24 +193,20 @@ ELSE IF (pcomp(F_Type,'zero', 4) .OR. pcomp(F_Type, '    ', 4)) THEN
 	NodalForceId=0.0
 
 END IF
-!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\
-! 																v
-!					END OF READING DATA.							v
-! 																v
-! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<</
+! ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 WRITE(RunDIMSD, 201)
 201   FORMAT (/,42X,  '========================================'/,&
 			59X,'End to read data files'/,&
 			42X,'========================================')
-! 201 FORMAT(/, '------ End of reading data file ------')
-
-! ==================================================================
-
+! ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 DEALLOCATE(K_FileName,M_FileName,C_FileName,IniD_FileName,IniV_FileName)
 
 CONTAINS
-
-! ==================================================================
+!//////////////////////////////////////////////////////////////////|
+!
+! 					Function : N_Format
+!
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 CHARACTER ( LEN = 256 ) FUNCTION N_Format( C , N )
 
 CHARACTER ( LEN = * ) , Intent( IN ) :: C

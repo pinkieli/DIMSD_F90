@@ -7,13 +7,13 @@ LOGICAL :: ExistFile
 
 INQUIRE(FILE=FileName, EXIST=ExistFile)
 
-IF(.NOT. ExistFile) THEN ! file does not exist
+IF(.NOT. ExistFile) THEN
 	InquireFile = .FALSE.
 	write(*,200) FileName
-	200 format(' ** ERROR ** : Specified file (',A12,') does not exist ! ')
+	200 format(' ** ERROR ** : Specified file (',A,') does not exist ! ')
 	STOP 'Error occurs !!!'
 
-ELSE ! file exists
+ELSE
 	InquireFile = .TRUE.
 
 END IF

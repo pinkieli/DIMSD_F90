@@ -19,7 +19,6 @@ SUBROUTINE Write2File(A,B,C)
 !\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ |
 
 USE ModuleParameter
-! USE ModuleIoport
 
 IMPLICIT NONE
 

@@ -10,13 +10,12 @@ INTEGER FUNCTION Command2Number(CommandName)
 IMPLICIT NONE
 
 INTEGER :: I
-INTEGER,PARAMETER:: N = 15
+INTEGER,PARAMETER:: N = 14
 
 LOGICAL :: pcomp
 CHARACTER :: CommandName*4
 CHARACTER(4),PARAMETER:: CommandList(N) = (/'end ', 'k   ', 'm   ', 'c   ', 'inid', &
-   									'iniv', 'dt  ', 'time', 'disp', 'velo', &
-   									'acce', 'ndof', 'meth', 'fpro', 'forc' /)
+		'iniv', 'dt  ', 'time', 'disp', 'velo','acce', 'ndof', 'meth', 'forc' /)
 
 DO I=1, N
 	IF (pcomp(CommandName, CommandList(I),4)) THEN

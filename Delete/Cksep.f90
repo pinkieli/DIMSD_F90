@@ -10,7 +10,6 @@ IMPLICIT NONE
 
 CHARACTER :: X
 
-!     Input character separators are blank or comma
 
 cksep = (X.EQ.' ') .OR. (X.EQ.',')
 

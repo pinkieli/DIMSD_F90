@@ -15,7 +15,6 @@ INTEGER :: N, INC, I, IA,IB
 CHARACTER(LEN=*) ::  A,B
 
 !     Compute increment between an upper and lower case letter
-
 INC = IACHAR('A') - IACHAR('a')
 
 !     Compare for match
@@ -27,7 +26,7 @@ DO I = 1,N
 
 !       Test all permutations of characters for match
           if(IA.ne.IB .and. IA+INC.ne.IB .and. IA.ne.IB+INC ) return
-END DO ! I
+END DO
 
 pcomp = .TRUE.
 

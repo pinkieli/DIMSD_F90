@@ -1,12 +1,18 @@
 INTEGER FUNCTION Command2Number(CommandName)
+!///////////////////////////////////////////////////////////////////|
+!	Force:
+!	 	Calculate the sequence number of a macro in the macro list.
+!
+! 	Input:
+! 		CommandName ---> current commmand name.
+! 	Output:
+! 		Command2Number ---> current commmand's sequence number.
+!
+! 	Require:
+! 		pcomp.f90
+!
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 
-! -------------------------------------------------------------------------
-!    Purpose: Calculate the sequence number of a macro in the macro list.
-!    Input:
-!      CommandName - current macro's name
-!    Output:
-!      Command2Number - current macro's sequence number.
-!--------------------------------------------------------------------------
 IMPLICIT NONE
 
 INTEGER :: I

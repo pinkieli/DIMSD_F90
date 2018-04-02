@@ -1,14 +1,18 @@
 LOGICAL FUNCTION pcomp(A,B,N)
-!---------------------------------------------------------------------------------
-!      Purpose: Compare character strings for match
-!               Ignores upper/lower case differences.
-!      Inputs:
-!         A(*)   - Character string 1
-!         B(*)   - Character string 2
-!         N      - Number of characters to compare
-!      Outputs:
-!         pcomp  - Flag, TRUE if A = B
-!---------------------------------------------------------------------------------
+!///////////////////////////////////////////////////////////////////|
+!	ReadPara
+!	 	 Compare character strings for match ignores upper/lower
+!			 case differences.
+!
+! 	Inputs:
+!		A(*) ---> Character string 1
+!		B(*) ---> Character string 2
+!		N 	---> Number of characters to compare
+!	Outputs:
+!		pcomp ---> Flag = .TRUE. if A = B, or, it is .FALSE.
+!
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
+
 IMPLICIT NONE
 
 INTEGER :: N, INC, I, IA,IB

@@ -1,4 +1,13 @@
 MODULE Force
+!///////////////////////////////////////////////////////////////////|
+!	Force:
+!	 	Define the external force in motions equations for
+! 			structual dynamics.
+!
+! 	Require:
+! 		ModuleParameter.f90
+!
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 
 USE ModuleParameter, ONLY: N=>NDof
 

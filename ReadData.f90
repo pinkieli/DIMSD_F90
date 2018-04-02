@@ -1,11 +1,11 @@
 SUBROUTINE ReadData()
 !///////////////////////////////////////////////////////////////////|
-!	ReadPara
+!	ReadData
 !	 	Read data for each parameters in InputFileName
 !
 !	Require:
 ! 		ModuleParameter.f90
-! 		ModuleIoPort.f90
+! 		InquireFile.f90
 ! 		Pcomp.f90
 !		Command2Number.f90
 !\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
@@ -20,10 +20,11 @@ ALLOCATE( K_Matrix(NDof,NDof), M_Matrix(NDof,NDof), C_Matrix(NDof,NDof))
 ALLOCATE( d0Vector(NDof), v0Vector(NDof))
 
 WRITE(RunDIMSD, 200)
-200   FORMAT (//,42X,  '========================================'/,&
+200   FORMAT (//,42X,'========================================'/,&
 			56X,'Begin to read data files'/,&
 			42X,'========================================')
-!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+! READ THE STIFF MATRIX.
 IF (InquireFile(K_FileName)) THEN
 	WRITE(RunDIMSD, 210)
 	210 FORMAT(/,'Read data of stiff matrix...')
@@ -45,8 +46,9 @@ ELSE
 
 END IF
 ! +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+! READ THE MASS MATRIX.
 M_Matrix=0.0
-IF (InquireFile(M_FileName)) THEN ! K_FileName exists
+IF (InquireFile(M_FileName)) THEN ! M_FileName exists
 
 	OPEN(UNIT=InputData,file=M_FileName, STATUS='OLD')
 
@@ -85,6 +87,7 @@ ELSE
 
 END IF
 ! +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+! READ THE DAMP MATRIX.
 IF (C_Exist) THEN
 	IF (pcomp(C_Type, 'file',4)) THEN
 		IF (InquireFile(C_FileName)) THEN
@@ -120,6 +123,7 @@ WRITE(RunDIMSD,231)
 WRITE(RunDIMSD,N_Format("(11X,<n>f12.4)", NDof )) &
 		((C_Matrix(I,J),J=1,NDof),I=1,NDof)
 ! ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+! READ THE INITIAL DISPLACEMENT.
 IF (pcomp(IniD_Type, 'file',4)) THEN
 
 	IF (InquireFile(IniD_FileName)) THEN
@@ -148,6 +152,7 @@ ELSE
 
 END IF
 ! +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+! READ THE INITIAL VELOCITY.
 IF (pcomp(IniV_Type, 'file',4)) THEN
 
 	IF (InquireFile(IniV_FileName)) THEN
@@ -178,6 +183,7 @@ ELSE
 
 END IF
 ! ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+! READ THE RIGHT-HAND TERM, NAMELY, THE EXTERNAL FORCE.
 WRITE(RunDIMSD, 260)
 260 FORMAT(/,'Read data of external force  ...')
 

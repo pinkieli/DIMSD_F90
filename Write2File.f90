@@ -1,21 +1,21 @@
 SUBROUTINE Write2File(A,B,C)
 !////////////////////////////////////////////////////////////////////////// |
-!	Write2Files:														|
-!	 	write time and value to files.									|
-! 																	|
-! 	Input:															|
-! 		A --> time													|
-! 		B --> vector of displacement, velocity or acceleration.			|
-! 		C --> whose value is   											|
-! 			'd' --> displacement										|
-! 			'v' --> velocity											|
-! 			'A' --> acceleration										|
-!	Require:															|
-! 		ModuleParameter.f90											|
-! 		ModuleIoPort.f90												|
-! 		Cksep.f90													|
-! 		Pcomp.f90													|
-!		Command2Number.f90											|
+!	Write2Files:
+!	 	write time and value to files.
+!
+! 	Input:
+! 		A --> time
+! 		B --> vector of displacement, velocity or acceleration.
+! 		C --> whose value is
+! 			'd' --> displacement
+! 			'v' --> velocity
+! 			'A' --> acceleration
+!	Require:
+! 		ModuleParameter.f90
+! 		ModuleIoPort.f90
+! 		Cksep.f90
+! 		Pcomp.f90
+!		Command2Number.f90
 !\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ |
 
 USE ModuleParameter

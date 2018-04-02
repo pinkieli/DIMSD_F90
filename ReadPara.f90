@@ -4,11 +4,11 @@ SUBROUTINE ReadPara(InputFileName)
 !	 	Read commands in InputFileName and parameters for each
 ! 		command.
 !	Input:
-!		InputFileName --> Name of input file provided by user.
+!		InputFileName ---> Name of input file provided by user.
 !
 !	Require:
 ! 		ModuleParameter.f90
-! 		ModuleIoPort.f90
+!		IndexCommaSpace.f90
 ! 		Pcomp.f90
 !		Command2Number.f90
 !\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
@@ -168,7 +168,7 @@ IF (5 .NE. J) THEN
 	WRITE(*,134) InputFileName
 	WRITE(RunDIMSD,134) InputFileName
 	134	FORMAT(1X,'** ERROR **: There is a wrong command line for mass' &
-				' matrix in input file :',A,'.')
+			' matrix in input file :',A,'.')
 	STOP 'Error occurs !!!'
 ELSE
 	ALLOCATE( CHARACTER(LEN = LSS-J) :: M_FileName)

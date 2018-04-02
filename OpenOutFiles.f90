@@ -1,14 +1,11 @@
 SUBROUTINE OpenOutFiles()
 !////////////////////////////////////////////////////////////////////////// |
-!	OpenOutFiles:													|
-!	 	open files for outputs										|
-! 																	|
-!	Require:															|
-! 		ModuleParameter.f90											|
-! 		ModuleIoPort.f90												|
-! 		Cksep.f90													|
-! 		Pcomp.f90													|
-!		Command2Number.f90											|
+!	OpenOutFiles:
+!	 	open files for outputs
+!
+!	Require:
+! 		ModuleParameter.f90
+!
 !\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ |
 
 USE ModuleParameter

@@ -1,5 +1,10 @@
 INTEGER FUNCTION IndexCommaSpace(string)
-
+!///////////////////////////////////////////////////////////////////|
+!	IndexCommaSpace:
+!	 	find the first location index where the character is ' ' or ','
+! 			for the string.
+!
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 IMPLICIT NONE
 
 CHARACTER(LEN=*), INTENT(IN) :: string

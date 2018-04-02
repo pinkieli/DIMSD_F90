@@ -1,5 +1,11 @@
 LOGICAL FUNCTION InquireFile(FileName)
-! Purpose: inquire IF the file exists in current directory.
+!///////////////////////////////////////////////////////////////////|
+!	InquireFile:
+!	 	determine if the file named FileName exists. If exists, return .TRUE.
+! 			or, retrun .FALSE.
+!
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
+
 IMPLICIT NONE
 
 CHARACTER(LEN=*) :: FileName

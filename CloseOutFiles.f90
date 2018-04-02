@@ -1,4 +1,12 @@
 SUBROUTINE CloseOutFiles()
+!////////////////////////////////////////////////////////////////////////// |
+!	CloseOutFiles:
+!	 	Close files for outputs
+!
+!	Require:
+! 		ModuleParameter.f90
+!
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ |
 
 USE ModuleParameter
 

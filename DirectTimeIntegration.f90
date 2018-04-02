@@ -1,4 +1,19 @@
 SUBROUTINE DirectTimeIntegration ()
+!///////////////////////////////////////////////////////////////////|
+!	DirectTimeIntegration:
+!	 	Compute motions equations for structual dynamics by employing
+! 			direct time integration methods.
+!
+! 	Require:
+! 		ModuleParameter.f90
+! 		Force.f90
+! 		m_gauss.f90
+! 		pcomp.f90
+! 		OpenOutFiles.f90
+!		Write2File.f90
+! 		CloseOutFiles.f90
+!
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\|
 
 USE ModuleParameter
 USE Force

@@ -1,4 +1,14 @@
 SUBROUTINE String2CommandLine(String ,LengthCL)
+!////////////////////////////////////////////////////////////////////////// |
+!	String2CommandLine:
+!	 	Delete the things after the character '!' and Delete space in the
+! 			String.
+!
+! 	Input:
+! 		String --> character provided by users.
+! 		LengthCL --> The length of String handled.
+!
+!\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ |
 
 IMPLICIT NONE
 

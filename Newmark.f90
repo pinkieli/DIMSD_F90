@@ -3,8 +3,6 @@ subroutine Newmark()
 ! Purpose: Newmark Method.
 
 use ModuleParameter
-! use ModuleData
-! use ModuleIoport
 USE Force
 use m_gauss
 
@@ -79,6 +77,7 @@ implicit none
 		v2=v1 + c6*a1 +c7*a2
 		call Write2File(t,d2,'d')
 		call Write2File(t,v2,'v')
+		write(*,*) v2
 		call Write2File(t,a2,'a')
 		d1=d2; v1=v2; a1=a2
 	end do

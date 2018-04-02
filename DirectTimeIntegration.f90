@@ -45,6 +45,7 @@ CALL solve(M_Matrix,f_eff1,a0Vector,NDof)
 
 CALL Write2File(0.0, d0Vector,'d') ! WRITE d(0) to file
 CALL Write2File(0.0, v0Vector,'v') ! WRITE v(0) to file
+WRITE(*,*) v0Vector
 CALL Write2File(0.0, a0Vector,'a') ! WRITE a(0) to file
 
 nstep= INT(TotalTime/dt)  ! number of time steps

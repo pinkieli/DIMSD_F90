@@ -36,7 +36,6 @@ IF (DispFlag .AND. pcomp(C,'d',1)) THEN
 END IF
 
 ! WRITE  value of displacement to Velo_filename.
-OutputVelo = 20000
 IF (VeloFlag .AND. pcomp(C,'v',1)) THEN
 	DO I=1,N_VeloDof
 		WRITE (OutputVelo(I), 201) A,B(Velo_Dof(I))
